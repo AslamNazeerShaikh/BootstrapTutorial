@@ -1,6 +1,7 @@
 using BootstrapTutorial.WebUi.Helpers;
 using BootstrapTutorial.WebUi.Models;
 using BootstrapTutorial.WebUi.Repositories;
+using BootstrapTutorial.WebUi.Services;
 
 namespace BootstrapTutorial.WebUi;
 
@@ -13,6 +14,10 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<IGenericRepository<Product>, ProductRepository>();
+
+        // Add services to the container
+        builder.Services.AddScoped<ConfigHelper>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
 
         // Ensure database is created
         DatabaseHelper.EnsureDatabase();
