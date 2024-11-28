@@ -1,0 +1,36 @@
+@model IEnumerable<BootstrapTutorial.WebUi.Models.Product>
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<div class="container mt-4">
+    <h2>Product List</h2>
+    <a class="btn btn-primary mb-3" asp-action="Create">Add New Product</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Id</td>
+                    <td>@product.Name</td>
+                    <td>@product.Price</td>
+                    <td>@product.Description</td>
+                    <td>
+                        <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@product.Id">Details</a>
+                        <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
+                        <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@product.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

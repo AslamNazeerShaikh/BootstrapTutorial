@@ -1,0 +1,16 @@
+@model BootstrapTutorial.WebUi.Models.Product
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container mt-4">
+    <h2>Product Details</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Name: @Model.Name</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Price: @Model.Price</h6>
+            <p class="card-text">Description: @Model.Description</p>
+        </div>
+    </div>
+    <a class="btn btn-secondary mt-3" asp-action="Index">Back to List</a>
+</div>

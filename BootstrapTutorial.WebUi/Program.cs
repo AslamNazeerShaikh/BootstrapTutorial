@@ -1,3 +1,7 @@
+using BootstrapTutorial.WebUi.Helpers;
+using BootstrapTutorial.WebUi.Models;
+using BootstrapTutorial.WebUi.Repositories;
+
 namespace BootstrapTutorial.WebUi;
 
 public class Program
@@ -8,6 +12,10 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
+        builder.Services.AddScoped<IGenericRepository<Product>, ProductRepository>();
+
+        // Ensure database is created
+        DatabaseHelper.EnsureDatabase();
 
         var app = builder.Build();
 
