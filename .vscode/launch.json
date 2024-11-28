@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: BootstrapTutorial.WebUi Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/BootstrapTutorial.WebUi/BootstrapTutorial.WebUi.csproj"
+        },
+        {
+            "name": "C#: BootstrapTutorial.WebUi [https]",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/BootstrapTutorial.WebUi/BootstrapTutorial.WebUi.csproj",
+            "launchConfigurationId": "TargetFramework=;https"
+        }
+    ]
+}
