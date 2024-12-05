@@ -2,6 +2,7 @@ using BootstrapTutorial.WebUi.Helpers;
 using BootstrapTutorial.WebUi.Models;
 using BootstrapTutorial.WebUi.Repositories;
 using BootstrapTutorial.WebUi.Services;
+using Scalar.AspNetCore;
 
 namespace BootstrapTutorial.WebUi;
 
@@ -18,6 +19,8 @@ public class Program
         // Add services to the container
         builder.Services.AddScoped<ConfigHelper>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+
+        builder.Services.AddOpenApi();
 
         // Ensure database is created
         DatabaseHelper.EnsureDatabase();
@@ -42,6 +45,9 @@ public class Program
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}")
             .WithStaticAssets();
+
+        app.MapOpenApi();
+        app.MapScalarApiReference();
 
         app.Run();
     }
