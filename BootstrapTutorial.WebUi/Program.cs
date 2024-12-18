@@ -1,7 +1,6 @@
 using BootstrapTutorial.WebUi.Helpers;
 using BootstrapTutorial.WebUi.Models;
 using BootstrapTutorial.WebUi.Repositories;
-using BootstrapTutorial.WebUi.Services;
 using Scalar.AspNetCore;
 
 namespace BootstrapTutorial.WebUi;
@@ -16,10 +15,6 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<IGenericRepository<Product>, ProductRepository>();
 
-        // Add services to the container
-        builder.Services.AddScoped<ConfigHelper>();
-        builder.Services.AddScoped<IEmailService, EmailService>();
-
         builder.Services.AddOpenApi();
 
         // Ensure database is created
@@ -31,8 +26,12 @@ public class Program
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
-            // The default HSTS value is 30 days.
             app.UseHsts();
+        }
+        else
+        {
+            app.MapOpenApi();
+            app.MapScalarApiReference();
         }
 
         app.UseHttpsRedirection();
@@ -45,9 +44,6 @@ public class Program
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}")
             .WithStaticAssets();
-
-        app.MapOpenApi();
-        app.MapScalarApiReference();
 
         app.Run();
     }
