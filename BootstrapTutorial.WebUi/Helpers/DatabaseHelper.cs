@@ -8,15 +8,25 @@ namespace BootstrapTutorial.WebUi.Helpers
 {
     public static class DatabaseHelper
     {
-        private const string DatabaseFileName = "AppData.db";
+        public static string? ConnectionString { get; private set; }
 
-        public static string ConnectionString => $"Data Source={DatabaseFileName};";
-
-        public static void EnsureDatabase()
+        public static void EnsureDatabase(string? connectionString)
         {
-            if (!File.Exists(DatabaseFileName))
+            ConnectionString = connectionString;
+
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
-                using (var connection = new SqliteConnection(ConnectionString))
+                throw new ArgumentNullException(nameof(connectionString));
+            }
+
+            string filePath = ExtractFilePathFromConnectionString(connectionString);
+
+            // Check if the file exists
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("The file 'LocalDatabase.sqlite3' does not exist on the filesystem.");
+
+                using (var connection = new SqliteConnection(connectionString))
                 {
                     connection.Open();
                     var command = connection.CreateCommand();
@@ -31,6 +41,32 @@ namespace BootstrapTutorial.WebUi.Helpers
                     command.ExecuteNonQuery();
                 }
             }
+            else
+            {
+                Console.WriteLine("The file 'LocalDatabase.sqlite3' exists.");
+            }
+        }
+
+        /// <summary>
+        /// Extracts the file path from the connection string.
+        /// </summary>
+        /// <param name="connectionString">The database connection string.</param>
+        /// <returns>The extracted file path.</returns>
+        private static string ExtractFilePathFromConnectionString(string connectionString)
+        {
+            // Look for "Data Source=" and extract the path until the next semicolon
+            const string dataSourceKeyword = "Data Source=";
+            int startIndex = connectionString.IndexOf(dataSourceKeyword, StringComparison.OrdinalIgnoreCase) + dataSourceKeyword.Length;
+            int endIndex = connectionString.IndexOf(';', startIndex);
+
+            // If no semicolon exists, take the remainder of the string
+            if (endIndex == -1) endIndex = connectionString.Length;
+
+            // Get the substring containing the file path
+            string relativePath = connectionString.Substring(startIndex, endIndex - startIndex);
+
+            // Convert the relative path to an absolute path
+            return Path.GetFullPath(relativePath);
         }
     }
 }

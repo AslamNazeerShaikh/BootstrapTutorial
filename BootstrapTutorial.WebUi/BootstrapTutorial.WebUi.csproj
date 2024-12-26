@@ -16,4 +16,8 @@
     <PackageReference Include="Scalar.AspNetCore" Version="1.2.47" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Database\" />
+  </ItemGroup>
+
 </Project>

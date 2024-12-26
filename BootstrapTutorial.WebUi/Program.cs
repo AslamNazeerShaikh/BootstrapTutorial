@@ -18,7 +18,7 @@ public class Program
         builder.Services.AddOpenApi();
 
         // Ensure database is created
-        DatabaseHelper.EnsureDatabase();
+        DatabaseHelper.EnsureDatabase(builder.Configuration.GetConnectionString("LocalDatabase"));
 
         var app = builder.Build();
 
