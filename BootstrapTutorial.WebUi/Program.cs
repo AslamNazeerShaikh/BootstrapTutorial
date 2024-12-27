@@ -64,6 +64,27 @@ public class Program
             };
         });
 
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            // Password settings.
+            options.Password.RequireDigit            = true;                     // Require at least one numeric digit.
+            options.Password.RequireLowercase        = true;                     // Require at least one lowercase character.
+            options.Password.RequireNonAlphanumeric  = true;                     // Require at least one special character.
+            options.Password.RequireUppercase        = true;                     // Require at least one uppercase character.
+            options.Password.RequiredLength          = 8;                        // Minimum length of 6 characters.
+            options.Password.RequiredUniqueChars     = 1;                        // At least one unique character in the password.
+
+            // Lockout settings.
+            options.Lockout.DefaultLockoutTimeSpan   = TimeSpan.FromMinutes(5);  // Lockout duration after failed attempts.
+            options.Lockout.MaxFailedAccessAttempts  = 5;                        // Max failed login attempts allowed.
+            options.Lockout.AllowedForNewUsers       = true;                     // Enable lockout for newly created users.
+
+            // User settings.
+            options.User.AllowedUserNameCharacters   =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+"; // Allowed characters in usernames.
+            options.User.RequireUniqueEmail          = true;                           // Require each user to have a unique email.
+        });
+
         builder.Services.AddAuthorization(options =>
         {
             // Admin Policy
