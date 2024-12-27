@@ -18,37 +18,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
-
-        // Add Authentication services
-        builder.Services.AddAuthentication("MyCookieAuth")
-            .AddCookie("MyCookieAuth", options =>
-            {
-                options.Cookie.HttpOnly     = true;                      // Prevent access to cookie via JavaScript
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are sent only over HTTPS
-                options.Cookie.SameSite     = SameSiteMode.Strict;       // Prevent CSRF
-                options.Cookie.Name         = "MySecureAuthCookie";
-                options.LoginPath           = "/Account/Login";          // Redirect unauthorized users
-                options.LogoutPath          = "/Account/Logout";
-                options.AccessDeniedPath    = "/Account/AccessDenied";   // Redirect unauthorized actions
-                options.ExpireTimeSpan      = TimeSpan.FromMinutes(60);  // Cookie expiration
-                options.SlidingExpiration   = true;                      // Refresh expiration on active use
-                options.Events              = new CookieAuthenticationEvents
-                {
-                    // Handle cookie validation to detect tampering or session hijacking
-                    OnValidatePrincipal = async context =>
-                    {
-                        var userPrincipal = context.Principal;
-                        if (userPrincipal == null || userPrincipal.Identity == null || !userPrincipal.Identity.IsAuthenticated)
-                        {
-                            context.RejectPrincipal();
-                            await context.HttpContext.SignOutAsync("MyCookieAuth");
-                        }
-                    }
-                };
-            });
-
         builder.Services.AddScoped<IGenericRepository<Product>, ProductRepository>();
-
         builder.Services.AddOpenApi();
 
         // Ensure database is created
@@ -64,12 +34,34 @@ public class Program
 
         builder.Services.ConfigureApplicationCookie(options =>
         {
-            options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-            options.LoginPath = "/Account/Login";
-            options.LogoutPath = "/Account/Logout";
-            options.AccessDeniedPath = "/Account/AccessDenied";
+            // Cookie Security Settings
+            options.Cookie.HttpOnly     = true;                      // Prevent access to cookie via JavaScript
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are sent only over HTTPS
+            options.Cookie.SameSite     = SameSiteMode.Strict;       // Prevent CSRF
+            options.Cookie.Name         = "MySecureAuthCookie";      // Custom cookie name
+
+            // Cookie Lifetime Management
+            options.ExpireTimeSpan      = TimeSpan.FromMinutes(60);  // Cookie expiration
+            options.SlidingExpiration   = true;                      // Refresh expiration on active use
+
+            // Redirect Paths
+            options.LoginPath           = "/Account/Login";          // Redirect unauthorized users
+            options.LogoutPath          = "/Account/Logout";         // Redirect on logout
+            options.AccessDeniedPath    = "/Account/AccessDenied";   // Redirect unauthorized actions
+
+            // Custom Events for Cookie Validation
+            options.Events = new CookieAuthenticationEvents
+            {
+                OnValidatePrincipal = async context =>
+                {
+                    var userPrincipal = context.Principal;
+                    if (userPrincipal == null || userPrincipal.Identity == null || !userPrincipal.Identity.IsAuthenticated)
+                    {
+                        context.RejectPrincipal(); // Reject if the user is not authenticated
+                        await context.HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme); // Use Identity default scheme
+                    }
+                }
+            };
         });
 
         builder.Services.AddAuthorization(options =>
